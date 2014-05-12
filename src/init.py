@@ -1,11 +1,16 @@
+# Copyright (c) 2014 Jacob Troxel under The MIT License (MIT)
+# Full terms and conditions of License available in LICENSE
+
 import os.path as osp
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
 	def __init__(self):
 		self.is_running = True
-		self.corpus_path = ""
+		self.corpus_path = None
 		self.load_config()
+		if self.corpus == None:
+			self.set_corpus_path("")
 		self.command_list = [['help',"Displays help info","help [command]"],['corpus',"Updates corpus path until next reload.", "corpus <path-to-corpus>"],
 							['reload',"Reloads config file.", 'reload'],['quit',"Exits", 'quit']]
 
@@ -22,8 +27,8 @@ class MainMenu:
 			new_config = open(config, "w")
 			new_config.write("# Generated settings.conf. Please update before using.\n")
 			new_config.write("# Anything after a '#' will not be read by the program.\n\n")
-			new_config.write("# Where the program will look for a corpus\n")
-			new_config.write("corpus")
+			new_config.write("# Where the program will look for a corpus.  Uncomment to use.\n")
+			new_config.write("#corpus /my/path/to/corpus")
 			new_config.close()
 
 	def load(self, line):
