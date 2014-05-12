@@ -6,6 +6,8 @@ class MainMenu:
 		self.is_running = True
 		self.corpus_path = ""
 		self.load_config()
+		self.command_list = [['help',"Displays help info","help [command]"],['corpus',"Updates corpus path until next reload.", "corpus <path-to-corpus>"],
+							['reload',"Reloads config file.", 'reload'],['quit',"Exits", 'quit']]
 
 	def load_config(self):
 		print ("Loading config file 'settings.conf'")
@@ -36,21 +38,30 @@ class MainMenu:
 			self.set_corpus_path(value)
 
 	def display_help(self, flags):
-		print ("HELP MENU")
-
+		if flags == "":
+			print ("Command List - Use 'help <command>' to get more info.")
+			for command in self.command_list:
+				print (command[0] + ": " + command[1])
+		else:
+			for command in self.command_list:
+				if command[0] == flags:
+					print (command[0] + ": " + command[1])
+					print ("Usage: " + command[2])
+					return
+			print ("Could not find command '" + flags + "'. Type help to see command list.")
 	def prompt(self):
 		user_input = str(raw_input("> "))
-		command_list = user_input.split(' ', 1) #get us the command as one word, and the flags as another
-		command = command_list[0]
+		command_in = user_input.split(' ', 1) #get us the command as one word, and the flags as another
+		command = command_in[0]
 		try:
-			flags = command_list[1]
+			flags = command_in[1]
 		except IndexError:
 			flags = ""
 		if not self.do_command(command, flags):
 			print ("Could not find command '" + command + "'. Type help to see command list.")
 
 	def do_command(self, command, flags):
-		if command == "quit" or command == 'q':
+		if command == "quit" or command == 'q' or command == "exit":
 			self.is_running = False
 			return True
 		elif command == "help":
