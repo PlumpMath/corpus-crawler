@@ -16,7 +16,8 @@ class MainMenu:
 
 	def load_config(self):
 		print ("Loading config file 'settings.conf'")
-		config = "../settings.conf"
+		root_path = osp.dirname(osp.dirname(osp.realpath(__file__)))
+		config = root_path + "/settings.conf"
 		if osp.exists(config): #load config
 			config_file = open(config, "r")
 			for line in config_file:
