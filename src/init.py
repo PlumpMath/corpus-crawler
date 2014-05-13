@@ -2,11 +2,13 @@
 # Full terms and conditions of License available in LICENSE
 
 import os.path as osp
-from corpustools import CorpusReader
+import os
+from corpustools import *
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
 	def __init__(self):
+		self.doc_list = []
 		self.is_running = True
 		self.corpus_path = None
 		self.load_config()
@@ -86,10 +88,24 @@ class MainMenu:
 			return True
 		elif command == "display":
 			if flags == "words":
-				words = self._reader.get_words()
-				print (words)
-				print ("Discovered " + str(len(words)) + " words.")
-				return True
+				#words = self._reader.get_words()
+				#print (words)
+				for doc in self.doc_list:
+					print (doc.fileid)
+					print [word.value for word in doc.words()]
+				#print ("Discovered " + str(len(words)) + " words.")
+			if flags == "files":
+				for doc in self.doc_list:
+					print (doc.fileid)
+			return True				
+		elif command == "loadxml":
+			for fileid in self._reader.fileids():
+				print ("Loading " + self.corpus_path + fileid)
+				self.doc_list.append(LoadXML(self.corpus_path + fileid))
+			return True
+		elif command == "clear":
+			os.system('clear')
+			return True
 		else:
 			return False
 
