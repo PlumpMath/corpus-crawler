@@ -34,6 +34,7 @@ class CorpusReader:
 		return self.word_list
 #end class def
 
+#helper functions
 def LoadXML(filename):
 	doc = Document(filename)
 	tree = ET.parse(filename)

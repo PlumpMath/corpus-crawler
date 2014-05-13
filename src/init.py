@@ -3,6 +3,7 @@
 
 import os.path as osp
 import os
+import ConfigParser
 from corpustools import *
 
 class MainMenu:
@@ -22,30 +23,21 @@ class MainMenu:
 		root_path = osp.dirname(osp.dirname(osp.realpath(__file__)))
 		config = root_path + "/settings.conf"
 		if osp.exists(config): #load config
-			config_file = open(config, "r")
-			for line in config_file:
-				if line[0] != "#":
-					self.load(line)
-			config_file.close()
+			parser = ConfigParser.ConfigParser()
+			parser.optionxform=str
+			parser.read(config)
+			corpus_config = parser.get("CONFIG","CorpusPath")
+			self.set_corpus_path(corpus_config)
 		else: #no config, generate one
 			print ("WARNING! Setting file not found. Please update settings.conf before continuing.")
-			new_config = open(config, "w")
-			new_config.write("# Generated settings.conf. Please update before using.\n")
-			new_config.write("# Anything after a '#' will not be read by the program.\n\n")
-			new_config.write("# Where the program will look for a corpus.  Uncomment to use.\n")
-			new_config.write("#corpus /my/path/to/corpus")
+			parser = ConfigParser.ConfigParser()
+			parser.optionxform=str
+			new_config = open(config, "a")
+			new_config.write("# Generated settings.conf. Please update before using.\n\n")
+			parser.add_section("CONFIG")
+			parser.set("CONFIG","#CorpusPath",'/path/to/corpus/')
+			parser.write(new_config)
 			new_config.close()
-
-	def load(self, line):
-		setting_parts = line.split(" ",1)
-		setting = setting_parts[0]
-		try:
-			value = setting_parts[1]
-		except IndexError:		
-			value = ""
-		if setting == "corpus":
-			print ("...loading corpus path...")
-			self.set_corpus_path(value)
 
 	def display_help(self, flags):
 		if flags == "":
@@ -118,7 +110,9 @@ class MainMenu:
 			print ("Corpus path set to current directory.")
 		elif osp.isdir(path):
 			self.corpus_path = path
-			print ("Corpus path set to '" + path + "'.")
+			if self.corpus_path[-1] != "/":
+				self.corpus_path += "/"
+			print ("Corpus path set to '" + self.corpus_path + "'.")
 		else:
 			print ("Error: '" + path + "' is not a directory.")
 
