@@ -4,6 +4,7 @@
 from nltk.corpus import *
 
 class Document:
+	"""Corpus Document, tracks location and value of words"""
 	word_list = []
 	fileid = ""
 	def __init__(self, fileid):
@@ -28,6 +29,7 @@ class Document:
 #end class def
 
 class Word:
+	"""Corpus word, tied to a document and a location"""
 	location = ""
 	value = ""
 	def __init__(self, location, value):
