@@ -2,6 +2,7 @@
 # Full terms and conditions of License available in LICENSE
 
 import os.path as osp
+import corpustools as ct
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
@@ -12,7 +13,7 @@ class MainMenu:
 		if self.corpus_path == None:
 			self.set_corpus_path("")
 		self.command_list = [['help',"Displays help info","help [command]"],['corpus',"Updates corpus path until next reload.", "corpus <path-to-corpus>"],
-							['reload',"Reloads config file.", 'reload'],['quit',"Exits", 'quit']]
+							['reload',"Reloads config file.", 'reload'],['quit',"Exits", 'quit'],['read',"Reads corpus and generates word list",'read']]
 
 	def load_config(self):
 		print ("Loading config file 'settings.conf'")
@@ -79,6 +80,10 @@ class MainMenu:
 			return True
 		elif command == "reload":
 			self.load_config()
+			return True
+		elif command == "read":
+			self._reader = ct.CorpusReader(self.corpus_path)
+			self._reader.print_fileids()
 			return True
 		else:
 			return False
