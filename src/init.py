@@ -9,7 +9,7 @@ class MainMenu:
 		self.is_running = True
 		self.corpus_path = None
 		self.load_config()
-		if self.corpus == None:
+		if self.corpus_path == None:
 			self.set_corpus_path("")
 		self.command_list = [['help',"Displays help info","help [command]"],['corpus',"Updates corpus path until next reload.", "corpus <path-to-corpus>"],
 							['reload',"Reloads config file.", 'reload'],['quit',"Exits", 'quit']]
@@ -22,6 +22,7 @@ class MainMenu:
 			for line in config_file:
 				if line[0] != "#":
 					self.load(line)
+			config_file.close()
 		else: #no config, generate one
 			print ("WARNING! Setting file not found. Please update settings.conf before continuing.")
 			new_config = open(config, "w")
