@@ -2,7 +2,7 @@
 # Full terms and conditions of License available in LICENSE
 
 import os.path as osp
-import corpustools as ct
+from corpustools import CorpusReader
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
@@ -82,9 +82,14 @@ class MainMenu:
 			self.load_config()
 			return True
 		elif command == "read":
-			self._reader = ct.CorpusReader(self.corpus_path)
-			self._reader.print_fileids()
+			self._reader = CorpusReader(self.corpus_path)
 			return True
+		elif command == "display":
+			if flags == "words":
+				words = self._reader.get_words()
+				print (words)
+				print ("Discovered " + str(len(words)) + " words.")
+				return True
 		else:
 			return False
 
