@@ -8,6 +8,7 @@ class Document:
 	word_list = []
 	fileid = ""
 	def __init__(self, fileid):
+		self.word_list = []
 		self.fileid = fileid
 		self.stop_words = stopwords.words('english')
 
@@ -26,6 +27,7 @@ class Document:
 			return [word.value for word in self.word_list]
 		else:
 			return [word.value for word in self.word_list if word.location == location]
+
 #end class def
 
 class Word:

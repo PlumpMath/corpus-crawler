@@ -25,6 +25,7 @@ class CorpusReader:
 		print (self._reader.fileids())
 
 	def clean_word_list(self, word_list):
+		self.word_list = []
 		for word in word_list:
 			if word.lower() not in self.stopword_list:
 				self.word_list.append(word.upper())
@@ -35,9 +36,9 @@ class CorpusReader:
 #end class def
 
 #helper functions
-def LoadXML(filename):
+def LoadXML(path, filename):
 	doc = Document(filename)
-	tree = ET.parse(filename)
+	tree = ET.parse(path + filename)
 	root = tree.getroot()
 	datanode = root.find("dataset")
 	abnode = datanode.find("abstract")

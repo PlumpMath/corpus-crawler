@@ -79,27 +79,43 @@ class MainMenu:
 			self._reader = CorpusReader(self.corpus_path)
 			return True
 		elif command == "display":
-			if flags == "words":
-				#words = self._reader.get_words()
-				#print (words)
-				for doc in self.doc_list:
-					print (doc.fileid)
-					print [word.value for word in doc.words()]
-				#print ("Discovered " + str(len(words)) + " words.")
-			if flags == "files":
-				for doc in self.doc_list:
-					print (doc.fileid)
-			return True				
+			self.display(flags)
+			return True
 		elif command == "loadxml":
 			for fileid in self._reader.fileids():
 				print ("Loading " + self.corpus_path + fileid)
-				self.doc_list.append(LoadXML(self.corpus_path + fileid))
+				self.doc_list.append(LoadXML(self.corpus_path, fileid))
 			return True
 		elif command == "clear":
 			os.system('clear')
 			return True
 		else:
 			return False
+
+	def display (self, flags):
+		flags_list = flags.split(' ')
+		ob_to_display = flags_list[0]
+		if ob_to_display == "files":
+			for doc in self.doc_list:
+				print (doc.fileid)
+		elif ob_to_display == "words":
+			try:
+				filenamei = flags_list.index("-f")
+				filename = flags_list[filenamei + 1]
+			except ValueError:
+				filename = ""
+			try:
+				locationi = flags_list.index("-l")
+				location = flags_list[locationi + 1]
+			except ValueError:				
+				location = ""
+			self.print_words(filename, location)
+				
+	def print_words(self, filename, location):
+		for doc in self.doc_list:
+			if doc.fileid == filename or filename == "":
+				print (doc.fileid)
+				print [word.value for word in doc.words() if word.location == location or location == ""]
 
 	def run(self):
 		while self.is_running:
