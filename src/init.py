@@ -51,6 +51,7 @@ class MainMenu:
 					print ("Usage: " + command[2])
 					return
 			print ("Could not find command '" + flags + "'. Type help to see command list.")
+
 	def prompt(self):
 		user_input = str(raw_input("> "))
 		command_in = user_input.split(' ', 1) #get us the command as one word, and the flags as another
@@ -86,11 +87,21 @@ class MainMenu:
 				print ("Loading " + self.corpus_path + fileid)
 				self.doc_list.append(LoadXML(self.corpus_path, fileid))
 			return True
+		elif command == "cooccur":
+			self.cooccur(flags)
+			return True
 		elif command == "clear":
 			os.system('clear')
 			return True
 		else:
 			return False
+
+	def cooccur(self, flags):
+		flags_list = flags.split(' ')
+		word1 = flags_list[0].upper()
+		word2 = flags_list[1].upper()
+		print (word1 + " -> " + word2 + " : " + str(get_cooccurence(self.doc_list, word1, word2)))
+		print (word2 + " -> " + word1 + " : " + str(get_cooccurence(self.doc_list, word2, word1)))
 
 	def display (self, flags):
 		flags_list = flags.split(' ')
@@ -115,7 +126,7 @@ class MainMenu:
 		for doc in self.doc_list:
 			if doc.fileid == filename or filename == "":
 				print (doc.fileid)
-				print [word.value for word in doc.words() if word.location == location or location == ""]
+				print [(word.value + ":" + word.location) for word in doc.words() if word.location == location or location == ""]
 
 	def run(self):
 		while self.is_running:

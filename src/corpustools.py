@@ -3,6 +3,7 @@
 
 from corpusdocs import *
 from nltk.corpus import *
+from nltk.tokenize import RegexpTokenizer as RegexT
 import os.path as osp
 import nltk.text
 import xml.etree.ElementTree as ET
@@ -56,4 +57,18 @@ def LoadXML(path, filename):
 	return doc
 
 def extract_words(nodetext):
-	return nodetext.split(' ')
+	tokenizer = RegexT(r'\w*[a-zA-Z]\w*')
+	return tokenizer.tokenize(nodetext)
+
+def get_cooccurence(doc_list, word1, word2):
+	total = 0
+	cocount = 0
+	for doc in doc_list:
+		if word1 in doc.values():
+			total += 1
+			if word2 in doc.values():
+				cocount += 1
+	if total == 0:
+		return 0
+	else:
+		return float(cocount)/float(total)

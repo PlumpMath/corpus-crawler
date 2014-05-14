@@ -13,8 +13,14 @@ class Document:
 		self.stop_words = stopwords.words('english')
 
 	def add_word(self, word):
-		if word.value.lower() not in self.stop_words:
+		if word.value.lower() not in self.stop_words and not self.in_list(word):
 			self.word_list.append(word)
+
+	def in_list(self, word):
+		for word1 in self.word_list:
+			if word1.value == word.value and word1.location == word.location:
+				return True
+		return False
 
 	def words(self, location=""):
 		if location=="":
