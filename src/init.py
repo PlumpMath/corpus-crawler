@@ -5,11 +5,13 @@ import os.path as osp
 import os
 import ConfigParser
 from corpustools import *
+from nltk.corpus import wordnet as wn
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
 	def __init__(self):
 		self.doc_list = []
+		self.word_list = []
 		self.is_running = True
 		self.corpus_path = None
 		self.load_config()
@@ -83,9 +85,21 @@ class MainMenu:
 			self.display(flags)
 			return True
 		elif command == "loadxml":
-			for fileid in self._reader.fileids():
-				print ("Loading " + self.corpus_path + fileid)
-				self.doc_list.append(LoadXML(self.corpus_path, fileid))
+			files = [name for name in os.listdir(self.corpus_path)]
+			file_count = len(files)
+			count = 0
+			for fileid in files:
+			#for fileid in self._reader.fileids():
+				count += 1
+				#print ("Loading " + self.corpus_path + fileid)
+				print (str(100 * float(count) / float(file_count)) + "%")
+				doc = LoadXML(self.corpus_path, fileid)
+				if doc != None:
+					self.doc_list.append(doc)
+			for doc in self.doc_list:
+				self.word_list += doc.values()
+				self.word_list = list(set(self.word_list))
+			print ("Found " + str(len(self.word_list)) + " unique words.")
 			return True
 		elif command == "cooccur":
 			self.cooccur(flags)
@@ -93,8 +107,28 @@ class MainMenu:
 		elif command == "clear":
 			os.system('clear')
 			return True
+		elif command == "graph":
+			self.graph(flags)
+			return True
+		elif command == "output":
+			fileout = open("word_list.txt","w")
+			fileout.write(",".join(self.word_list))
+			fileout.close()
+			return True
 		else:
 			return False
+
+	def graph(self, flags):
+		seed_word = flags.split(' ')[0]
+		boundary = flags.split(' ')[1]
+		for word in self.word_list:
+			seed = wn.synset(seed_word + ".n.01")
+			try:
+				word_score = seed.wup_similarity(wn.synsets(word)[0])
+				if word_score >= float(boundary):
+					print (word + ": " + str(word_score))
+			except IndexError:
+				continue
 
 	def cooccur(self, flags):
 		flags_list = flags.split(' ')

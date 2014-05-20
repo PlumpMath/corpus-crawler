@@ -5,8 +5,10 @@ from corpusdocs import *
 from nltk.corpus import *
 from nltk.tokenize import RegexpTokenizer as RegexT
 import os.path as osp
+import os
 import nltk.text
 import xml.etree.ElementTree as ET
+import xml
 
 class CorpusReader:
 	"""Reads a corpus and generates word lists.  Uses the NLTK toolkit."""
@@ -39,26 +41,33 @@ class CorpusReader:
 #helper functions
 def LoadXML(path, filename):
 	doc = Document(filename)
-	tree = ET.parse(path + filename)
-	root = tree.getroot()
-	datanode = root.find("dataset")
-	abnode = datanode.find("abstract")
-	for word in extract_words(abnode.find("para").text):
-		doc.add_word(Word("ABSTRACT",word))
+	try:
+		tree = ET.parse(path + filename)
+		root = tree.getroot()
+		datanode = root.find("dataset")
+		abnode = datanode.find("abstract")
+		for word in extract_words(abnode.find("para").text):
+			doc.add_word(Word("ABSTRACT",word))
 
-	for keyword in datanode.iter("keyword"):
-		for word in extract_words(keyword.text):
-			doc.add_word(Word("KEYWORD",word))
+		for keyword in datanode.iter("keyword"):
+			for word in extract_words(keyword.text):
+				doc.add_word(Word("KEYWORD",word))
 
-	titlenode = datanode.find("title")
-	for word in extract_words(titlenode.text):
-		doc.add_word(Word("TITLE",word))
-
+		titlenode = datanode.find("title")
+		for word in extract_words(titlenode.text):
+			doc.add_word(Word("TITLE",word))
+	except AttributeError:
+		return None
+	except xml.etree.ElementTree.ParseError:
+		return None
 	return doc
 
 def extract_words(nodetext):
-	tokenizer = RegexT(r'\w*[a-zA-Z]\w*')
-	return tokenizer.tokenize(nodetext)
+	try:
+		tokenizer = RegexT(r'\w*[a-zA-Z]\w*')
+		return tokenizer.tokenize(nodetext)
+	except TypeError:
+		return []
 
 def get_cooccurence(doc_list, word1, word2):
 	total = 0
