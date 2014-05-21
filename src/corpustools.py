@@ -4,6 +4,7 @@
 from corpusdocs import *
 from nltk.corpus import *
 from nltk.tokenize import RegexpTokenizer as RegexT
+from nltk.corpus import wordnet as wn
 import os.path as osp
 import os
 import nltk.text
@@ -81,3 +82,31 @@ def get_cooccurence(doc_list, word1, word2):
 		return 0
 	else:
 		return float(cocount)/float(total)
+
+def get_average_distances(word_list):
+	averages = {}
+	for word in word_list:
+		print "Checking " + word
+		average = 0
+		count = 0
+		try:
+			synset_one = wn.synsets(word)[0]
+		except IndexError:
+			continue
+		#get average distance from each other word
+		for other_word in word_list:
+			if word != other_word:
+				try:
+					synset_two = wn.synsets(other_word)[0]
+				except IndexError:
+					continue
+				word_score = synset_one.wup_similarity(synset_two)
+				if word_score != None:
+					average += float(word_score)
+					count += 1
+		if count != 0:
+			averages[word] = float(average)/float(count)
+		else:
+			averages[word] = 0
+	return averages
+				

@@ -4,6 +4,7 @@
 import os.path as osp
 import os
 import ConfigParser
+import codecs
 from corpustools import *
 from nltk.corpus import wordnet as wn
 
@@ -12,6 +13,7 @@ class MainMenu:
 	def __init__(self):
 		self.doc_list = []
 		self.word_list = []
+		self.averages = {}
 		self.is_running = True
 		self.corpus_path = None
 		self.load_config()
@@ -101,6 +103,14 @@ class MainMenu:
 				self.word_list = list(set(self.word_list))
 			print ("Found " + str(len(self.word_list)) + " unique words.")
 			return True
+		elif command == "clean":
+			for word in self.word_list:
+				try:
+					word.decode('ascii')
+				except UnicodeEncodeError:
+					print word
+					self.word_list.remove(word)
+			return True
 		elif command == "cooccur":
 			self.cooccur(flags)
 			return True
@@ -112,8 +122,22 @@ class MainMenu:
 			return True
 		elif command == "output":
 			fileout = open("word_list.txt","w")
-			fileout.write(",".join(self.word_list))
+			string = ",".join(self.word_list)
+			#print string[3960:3980]
+			try:
+				fileout.write(string)
+			except UnicodeEncodeError:
+				print "Non ASCII char found."
 			fileout.close()
+			return True
+		elif command == "calcaverage":
+			self.averages = get_average_distances(self.word_list)
+			print len(self.averages)
+			return True
+		elif command == "average":
+			for word in self.averages:
+				if self.averages[word] >= float(flags):
+					print word + " : " + str(self.averages[word])
 			return True
 		else:
 			return False
