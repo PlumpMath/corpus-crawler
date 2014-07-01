@@ -7,6 +7,8 @@ import ConfigParser
 import codecs
 from corpustools import *
 from nltk.corpus import wordnet as wn
+import nltk.tag
+from nltk.corpus import brown
 
 class MainMenu:
 	"""Main Menu for the CorpusCrawler tool, written for Python 2.7"""
@@ -87,6 +89,10 @@ class MainMenu:
 			self.display(flags)
 			return True
 		elif command == "loadxml":
+			traindata = brown.tagged_sents(categories=['editorial'])
+			t0 = nltk.DefaultTagger('NN')
+			t1 = nltk.UnigramTagger(traindata, backoff=t0)
+			t2 = nltk.BigramTagger(traindata, backoff=t1)
 			files = [name for name in os.listdir(self.corpus_path)]
 			file_count = len(files)
 			count = 0
@@ -95,7 +101,7 @@ class MainMenu:
 				count += 1
 				#print ("Loading " + self.corpus_path + fileid)
 				print (str(100 * float(count) / float(file_count)) + "%")
-				doc = LoadXML(self.corpus_path, fileid)
+				doc = LoadXML(self.corpus_path, fileid, t2)
 				if doc != None:
 					self.doc_list.append(doc)
 			for doc in self.doc_list:
@@ -138,6 +144,21 @@ class MainMenu:
 			for word in self.averages:
 				if self.averages[word] >= float(flags):
 					print word + " : " + str(self.averages[word])
+			return True
+		elif command == "tocsv":
+			fileout = open("/home/jtroxel/np.csv","w")
+			for doc in self.doc_list:
+				for word in doc.words():
+					try:
+						fileout.write(",".join([word.value, doc.fileid, word.location, word.sentence]))
+						fileout.write("\n")
+					except UnicodeEncodeError:
+						continue
+			fileout.close()
+			return True
+		elif command == "metrics":
+			print len(self.doc_list)
+			generate_metrics("/home/jtroxel/np.csv", 21994)
 			return True
 		else:
 			return False
@@ -193,7 +214,8 @@ class MainMenu:
 	def set_corpus_path(self, path):
 		if path == "":
 			print ("Corpus path set to current directory.")
-		elif osp.isdir(path):
+		elif osp.isdir(path):			self.graph(flags)
+
 			self.corpus_path = path
 			if self.corpus_path[-1] != "/":
 				self.corpus_path += "/"

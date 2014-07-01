@@ -6,9 +6,11 @@ from nltk.corpus import *
 class Document:
 	"""Corpus Document, tracks location and value of words"""
 	word_list = []
+	sentence_list = []
 	fileid = ""
 	def __init__(self, fileid):
 		self.word_list = []
+		self.sentence_list = []
 		self.fileid = fileid
 		self.stop_words = stopwords.words('english')
 
@@ -21,6 +23,15 @@ class Document:
 			if word1.value == word.value and word1.location == word.location:
 				return True
 		return False
+
+	def add_sentence(self, sentence):
+		self.sentence_list.append(sentence)
+
+	def sentences(self, location=""):
+		if location=="":
+			return self.sentence_list
+		else:
+			return [sentence for sentence in self.sentence_list if sentence.location == location]
 
 	def words(self, location=""):
 		if location=="":
@@ -40,7 +51,18 @@ class Word:
 	"""Corpus word, tied to a document and a location"""
 	location = ""
 	value = ""
-	def __init__(self, location, value):
+	sentence = ""
+	def __init__(self, location, value, sentence=""):
 		self.location = location.upper()
 		self.value = value.upper()
+		self.sentence = sentence
+#end class def
+
+class Sentence:
+	"""Corpus sentence, tied to a document and a location"""
+	location = ""
+	value = ""
+	def __init__(self, location, value):
+		self.location = location.upper()
+		self.value = value
 #end class def

@@ -1,0 +1,9 @@
+[TREE]
+king = lord1 lord2 lord3
+lord1 = servent1 vassal2 lord4
+lord2 = vassal3 vassal4
+lord3 = vassal5 vassal6
+king2 = lord4 lord5 lord6
+lord4 = servent1 vassal8
+lord5 = vassal9 vassal10
+lord6 = vassal11 vassal12
