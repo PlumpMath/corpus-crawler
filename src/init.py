@@ -88,7 +88,7 @@ class MainMenu:
 		elif command == "display":
 			self.display(flags)
 			return True
-		elif command == "loadxml":
+		elif command == "crawl":
 			traindata = brown.tagged_sents(categories=['editorial'])
 			t0 = nltk.DefaultTagger('NN')
 			t1 = nltk.UnigramTagger(traindata, backoff=t0)
@@ -100,7 +100,7 @@ class MainMenu:
 			#for fileid in self._reader.fileids():
 				count += 1
 				#print ("Loading " + self.corpus_path + fileid)
-				print (str(100 * float(count) / float(file_count)) + "%")
+				print (str(100 * float(count) / float(file_count)) + "%") 
 				doc = LoadXML(self.corpus_path, fileid, t2)
 				if doc != None:
 					self.doc_list.append(doc)
